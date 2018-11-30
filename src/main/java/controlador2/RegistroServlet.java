@@ -25,7 +25,10 @@ import vo2.Results;
 
 /**
  *
- * @author Labing I5
+ * @author Sulay Cupitra Cupitra
+ * @Asginatura. BASE DE DATOS
+ * @Actividad: Examen final
+ * 
  */
 public class RegistroServlet extends HttpServlet {
 

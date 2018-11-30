@@ -6,6 +6,7 @@
 package dao2;
 
 import dao2.*;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import vo2.Results;
 
 /**
@@ -28,7 +31,7 @@ public class DAOresultado implements CursoBaseDatos<Results> {
     int ENO;// int not null,
     int POINTS;// int not null,
     int idexercises;//INT NOT NULL, */
-    public Results find(int cedula) throws SQLException {
+    public Results find(int cedula) throws SQLException, URISyntaxException {
         Results resultado = null;
         String query = "Select * from Results Where IDresultado =" + cedula;
         Connection connection = Conexion.getConnection();
@@ -61,32 +64,36 @@ public class DAOresultado implements CursoBaseDatos<Results> {
     public List findAll() throws SQLException {
         List<Results> personas = null;
         String query = "SELECT * FROM resultado";
-        Connection connection = Conexion.getConnection();
         try {
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(query);
-            int id = 0, pointS = 0, apellido = 0;
-            String nombre = null;
-            while (rs.next()) {
-                if (personas == null) {
-                    personas = new ArrayList<Results>();
+            Connection connection = Conexion.getConnection();
+            try {
+                Statement st = connection.createStatement();
+                ResultSet rs = st.executeQuery(query);
+                int id = 0, pointS = 0, apellido = 0;
+                String nombre = null;
+                while (rs.next()) {
+                    if (personas == null) {
+                        personas = new ArrayList<Results>();
+                    }
+
+                    Results registro = new Results();
+                    id = rs.getInt("sid");
+                    registro.setIdEstudiante(id);
+                    nombre = rs.getString("cat");
+                    registro.setCAT(nombre);
+                    apellido = rs.getInt("ENO");
+                    registro.setENO(apellido);
+                    pointS = rs.getInt("pointS");
+                    registro.setPOINTS(pointS);
                 }
+                st.close();
 
-                Results registro = new Results();
-                id = rs.getInt("sid");
-                registro.setIdEstudiante(id);
-                nombre = rs.getString("cat");
-                registro.setCAT(nombre);
-                apellido = rs.getInt("ENO");
-                registro.setENO(apellido);
-                pointS = rs.getInt("pointS");
-                registro.setPOINTS(pointS);
+            } catch (SQLException e) {
+                System.out.println("Problemas al obtener la lista de Departamentos");
+                e.printStackTrace();
             }
-            st.close();
-
-        } catch (SQLException e) {
-            System.out.println("Problemas al obtener la lista de Departamentos");
-            e.printStackTrace();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(DAOresultado.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return personas;
@@ -95,31 +102,37 @@ public class DAOresultado implements CursoBaseDatos<Results> {
     @Override
     public boolean insert(Results persona) throws SQLException {
         boolean result = false;
-        Connection connection = Conexion.getConnection();
-        
-        ///INSERT   INTO resultado (idEstudiante,CAT,ENO,POINTS,idexercises) VALUES  (101,'H',1,10,1);
-        String query = " insert into resultado (idEstudiante,CAT,ENO,POINTS,idexercises)" 
-                + " values (?,?,?,?,?)";
-        PreparedStatement preparedStmt = null;
         try {
-            preparedStmt = connection.prepareStatement(query);
+            Connection connection = Conexion.getConnection();
 
-            preparedStmt.setInt(1, persona.getIdEstudiante());
-            preparedStmt.setString(2, persona.getCAT());
-            preparedStmt.setInt(3, persona.getENO());
-            preparedStmt.setInt(3, persona.getPOINTS());
-            result = preparedStmt.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            ///INSERT   INTO resultado (idEstudiante,CAT,ENO,POINTS,idexercises) VALUES  (101,'H',1,10,1);
+            String query = " insert into resultado (idEstudiante,CAT,ENO,POINTS,idexercises)"
+                    + " values (?,?,?,?,?)";
+            PreparedStatement preparedStmt = null;
+            try {
+                preparedStmt = connection.prepareStatement(query);
+
+                preparedStmt.setInt(1, persona.getIdEstudiante());
+                preparedStmt.setString(2, persona.getCAT());
+                preparedStmt.setInt(3, persona.getENO());
+                preparedStmt.setInt(3, persona.getPOINTS());
+                result = preparedStmt.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(DAOresultado.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         return result;
     }
 
     @Override
     public boolean update(Results persona) throws SQLException {
         boolean result = false;
-        Connection connection = Conexion.getConnection();
-        //CAT,ENO,POINTS,idexercises
+        try {
+            Connection connection = Conexion.getConnection();
+            //CAT,ENO,POINTS,idexercises
         String query
                 = "update resultado set CAT = ?, ENO = ?, POINTS=? where IDresultado  = ?";
         PreparedStatement preparedStmt = null;
@@ -135,22 +148,31 @@ public class DAOresultado implements CursoBaseDatos<Results> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(DAOresultado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         return result;
     }
 
     @Override
     public boolean delete(Results persona) throws SQLException {
         boolean result = false;
-        Connection connection = Conexion.getConnection();
-        String query = "delete from resultado where IDresultado  = ?";
-        System.out.println(query + " " + persona.getIDresultado());
-        PreparedStatement preparedStmt = null;
         try {
-            preparedStmt = connection.prepareStatement(query);
-            preparedStmt.setInt(1, persona.getIDresultado());
-            result = preparedStmt.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            Connection connection = Conexion.getConnection();
+
+            String query = "delete from resultado where IDresultado  = ?";
+            System.out.println(query + " " + persona.getIDresultado());
+            PreparedStatement preparedStmt = null;
+            try {
+                preparedStmt = connection.prepareStatement(query);
+                preparedStmt.setInt(1, persona.getIDresultado());
+                result = preparedStmt.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(DAOresultado.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
