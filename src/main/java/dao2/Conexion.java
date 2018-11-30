@@ -48,6 +48,7 @@ public class Conexion {
         if (CONEXION == null) {
             try {
                 
+                
                 CONEXION = DriverManager.getConnection(dbUrl, username, password);
             } catch (SQLException e) {
                 System.out.println("Connection Failed! Check output console");
