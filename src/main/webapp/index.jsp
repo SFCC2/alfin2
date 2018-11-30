@@ -5,7 +5,9 @@
 --%>
 
 <%@page import="java.util.ArrayList"%>
-<%@page import="vo.Persona"%>
+<%@page import="vo2.Estudiante"%>
+<%@page import="vo2.Excercise"%>
+<%@page import="vo2.Results"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <!-- Template by Quackit.com -->
