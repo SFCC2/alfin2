@@ -24,8 +24,9 @@ public class Excercise {
         this.TOPIC = TOPIC;
         this.MAXTP = MAXTP;
     }
+    
     public Excercise() {
-        this.MAXTP = 10;
+       
     }
 
     public int getIdExcercise() {
